@@ -1,5 +1,6 @@
 package com.example.assistant;
 
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -11,9 +12,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 
 /**
  * JavaFX based UI for interacting with the assistant.
@@ -42,10 +45,12 @@ public class AssistantGUI extends Application {
         Button testButton = new Button("Generate Tests");
 
         sendButton.setOnAction(e -> {
+
             try {
                 String result = client.sendPrompt(promptArea.getText());
                 responseArea.setText(result);
             } catch (IOException | InterruptedException ex) {
+
                 responseArea.setText("Error: " + ex.getMessage());
             }
         });
@@ -117,5 +122,6 @@ public class AssistantGUI extends Application {
         stage.setTitle("Local Code Assistant");
         stage.setScene(scene);
         stage.show();
+
     }
 }

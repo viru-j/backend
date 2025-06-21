@@ -20,6 +20,7 @@
             <version>3.12.0</version>
         </dependency>
         <dependency>
+
             <groupId>fr.inria.gforge.spoon</groupId>
             <artifactId>spoon-core</artifactId>
             <version>10.4.2</version>
@@ -28,6 +29,7 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>21.0.1</version>
+
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
