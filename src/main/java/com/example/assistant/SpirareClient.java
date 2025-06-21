@@ -1,5 +1,6 @@
 package com.example.assistant;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,6 +13,7 @@ import java.net.http.HttpResponse;
 public class SpirareClient {
     private final HttpClient httpClient;
     private final String apiEndpoint;
+    private static final Gson GSON = new Gson();
 
     public SpirareClient(String apiEndpoint) {
         this.httpClient = HttpClient.newHttpClient();
@@ -22,16 +24,15 @@ public class SpirareClient {
      * Sends a prompt to the Spirare model and returns the response string.
      */
     public String sendPrompt(String prompt) throws IOException, InterruptedException {
+        String body = GSON.toJson(new Prompt(prompt));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiEndpoint))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString("{\"prompt\":\"" + escape(prompt) + "\"}"))
+                .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
 
-    private static String escape(String input) {
-        return input.replace("\"", "\\\"").replace("\n", "\\n");
-    }
+    private record Prompt(String prompt) {}
 }
