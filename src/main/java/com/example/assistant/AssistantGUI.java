@@ -1,86 +1,127 @@
 package com.example.assistant;
 
-import javax.swing.*;
-import java.awt.*;
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
+
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.example.assistant.JavaFileAnalyzer;
 
 /**
- * Basic Swing-based UI for interacting with the assistant.
+ * JavaFX based UI for interacting with the assistant.
  */
-public class AssistantGUI {
-    private final SpirareClient client;
+public class AssistantGUI extends Application {
+    private static String endpoint = "http://localhost:8080/api";
+
+    private SpirareClient client;
     private final ProjectStructureAnalyzer analyzer = new ProjectStructureAnalyzer();
     private final JavaFileAnalyzer fileAnalyzer = new JavaFileAnalyzer();
 
-    public AssistantGUI(SpirareClient client) {
-        this.client = client;
+    public static void setEndpoint(String ep) {
+        endpoint = ep;
     }
 
-    public void start() {
-        JFrame frame = new JFrame("Local Code Assistant");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+    @Override
+    public void start(Stage stage) {
+        client = new SpirareClient(endpoint);
 
-        JTextArea promptArea = new JTextArea();
-        JTextArea responseArea = new JTextArea();
-        JButton sendButton = new JButton("Send");
-        JButton scanButton = new JButton("Scan Project");
-        JButton analyzeButton = new JButton("Analyze File");
+        TextArea promptArea = new TextArea();
+        TextArea responseArea = new TextArea();
+        Button sendButton = new Button("Send");
+        Button scanButton = new Button("Scan Project");
+        Button showStructureButton = new Button("Show Structure");
+        Button analyzeButton = new Button("Analyze File");
+        Button testButton = new Button("Generate Tests");
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new JScrollPane(promptArea), BorderLayout.NORTH);
-        panel.add(sendButton, BorderLayout.CENTER);
-        panel.add(new JScrollPane(responseArea), BorderLayout.SOUTH);
+        sendButton.setOnAction(e -> {
 
-        JPanel south = new JPanel(new FlowLayout());
-        south.add(scanButton);
-        south.add(analyzeButton);
-        frame.add(panel, BorderLayout.CENTER);
-        frame.add(south, BorderLayout.SOUTH);
-
-        sendButton.addActionListener(e -> {
             try {
                 String result = client.sendPrompt(promptArea.getText());
                 responseArea.setText(result);
             } catch (IOException | InterruptedException ex) {
-                ex.printStackTrace();
+
                 responseArea.setText("Error: " + ex.getMessage());
             }
         });
 
-        scanButton.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+        scanButton.setOnAction(e -> {
+            DirectoryChooser chooser = new DirectoryChooser();
+            var dir = chooser.showDialog(stage);
+            if (dir != null) {
                 try {
                     Path output = Path.of("project_structure.txt");
-                    analyzer.scan(chooser.getSelectedFile().getAbsolutePath(), output);
-                    JOptionPane.showMessageDialog(frame, "Project structure saved to " + output);
+                    analyzer.scan(dir.getAbsolutePath(), output);
+                    responseArea.setText("Project structure saved to " + output);
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "Scan failed: " + ex.getMessage());
+                    responseArea.setText("Scan failed: " + ex.getMessage());
                 }
             }
         });
 
-        analyzeButton.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Java", "java"));
-            if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+        showStructureButton.setOnAction(e -> {
+            String last = analyzer.getLastScan();
+            if (last == null) {
+                responseArea.setText("No project scanned yet.");
+            } else {
+                responseArea.setText(last);
+            }
+        });
+
+        analyzeButton.setOnAction(e -> {
+            FileChooser chooser = new FileChooser();
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java", "*.java"));
+            var file = chooser.showOpenDialog(stage);
+            if (file != null) {
                 try {
-                    fileAnalyzer.parse(Paths.get(chooser.getSelectedFile().getAbsolutePath()));
+                    fileAnalyzer.parse(Paths.get(file.getAbsolutePath()));
                     String methods = String.join("\n", fileAnalyzer.listMethodSignatures());
                     responseArea.setText(methods);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "Analyze failed: " + ex.getMessage());
+                } catch (Exception ex) {
+                    responseArea.setText("Analyze failed: " + ex.getMessage());
                 }
             }
         });
 
-        frame.setVisible(true);
+        testButton.setOnAction(e -> {
+            FileChooser chooser = new FileChooser();
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java", "*.java"));
+            var file = chooser.showOpenDialog(stage);
+            if (file != null) {
+                DirectoryChooser dirChooser = new DirectoryChooser();
+                dirChooser.setTitle("Select Project Root");
+                var projectDir = dirChooser.showDialog(stage);
+                if (projectDir != null) {
+                    try {
+                        new JUnitTestGenerator().generateTests(
+                                Paths.get(file.getAbsolutePath()),
+                                Paths.get(projectDir.getAbsolutePath()));
+                        responseArea.setText("Test generated for " + file.getName());
+                    } catch (IOException ex) {
+                        responseArea.setText("Test generation failed: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+
+        HBox buttons = new HBox(10, sendButton, scanButton, showStructureButton, analyzeButton, testButton);
+        VBox center = new VBox(10, promptArea, buttons, responseArea);
+        center.setPadding(new Insets(10));
+
+        Scene scene = new Scene(new BorderPane(center), 800, 600);
+        stage.setTitle("Local Code Assistant");
+        stage.setScene(scene);
+        stage.show();
+
     }
 }

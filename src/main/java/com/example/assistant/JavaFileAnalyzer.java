@@ -1,35 +1,46 @@
 package com.example.assistant;
 
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.imports.ImportDeclaration;
 
-import java.io.IOException;
+import spoon.Launcher;
+import spoon.reflect.CtModel;
+import spoon.reflect.declaration.CtImport;
+import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.visitor.filter.TypeFilter;
+
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Analyzes a Java source file to extract method and import information.
+
+ * Analyzes a Java source file using the Spoon framework.
  */
 public class JavaFileAnalyzer {
-    private CompilationUnit cu;
+    private CtModel model;
+
 
     /**
      * Parses the Java file from the given path.
      */
-    public void parse(Path file) throws IOException {
-        cu = StaticJavaParser.parse(file);
+
+    public void parse(Path file) {
+        Launcher launcher = new Launcher();
+        launcher.addInputResource(file.toString());
+        launcher.buildModel();
+        model = launcher.getModel();
+
     }
 
     /**
      * Returns a list of method signatures in the parsed file.
      */
     public List<String> listMethodSignatures() {
-        if (cu == null) return List.of();
-        return cu.findAll(MethodDeclaration.class).stream()
-                .map(MethodDeclaration::getDeclarationAsString)
+
+        if (model == null) return List.of();
+        return model.getElements(new TypeFilter<>(CtMethod.class)).stream()
+                .map(CtMethod::getSignature)
+
                 .collect(Collectors.toList());
     }
 
@@ -37,9 +48,11 @@ public class JavaFileAnalyzer {
      * Returns a list of imports in the parsed file.
      */
     public List<String> listImports() {
-        if (cu == null) return List.of();
-        return cu.getImports().stream()
-                .map(ImportDeclaration::getNameAsString)
+
+        if (model == null) return List.of();
+        return model.getElements(new TypeFilter<>(CtImport.class)).stream()
+                .map(Object::toString)
+
                 .collect(Collectors.toList());
     }
 
@@ -47,11 +60,13 @@ public class JavaFileAnalyzer {
      * Extracts the source text of a specific method by name.
      */
     public String extractMethod(String methodName) {
-        if (cu == null) return "";
-        return cu.findAll(MethodDeclaration.class).stream()
-                .filter(m -> m.getNameAsString().equals(methodName))
-                .map(MethodDeclaration::toString)
+
+        if (model == null) return "";
+        return model.getElements(new TypeFilter<>(CtMethod.class)).stream()
+                .filter(m -> m.getSimpleName().equals(methodName))
                 .findFirst()
+                .map(Object::toString)
+
                 .orElse("");
     }
 }
