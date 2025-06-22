@@ -1,5 +1,6 @@
 package com.example.assistant;
 
+
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtImport;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 public class JavaFileAnalyzer {
     private CtModel model;
 
+
     /**
      * Parses the Java file from the given path.
      */
+
     public void parse(Path file) {
         Launcher launcher = new Launcher();
         launcher.addInputResource(file.toString());
@@ -30,9 +33,11 @@ public class JavaFileAnalyzer {
      * Returns a list of method signatures in the parsed file.
      */
     public List<String> listMethodSignatures() {
+
         if (model == null) return List.of();
         return model.getElements(new TypeFilter<>(CtMethod.class)).stream()
                 .map(CtMethod::getSignature)
+
                 .collect(Collectors.toList());
     }
 
@@ -43,6 +48,7 @@ public class JavaFileAnalyzer {
         if (model == null) return List.of();
         return model.getElements(new TypeFilter<>(CtImport.class)).stream()
                 .map(Object::toString)
+
                 .collect(Collectors.toList());
     }
 

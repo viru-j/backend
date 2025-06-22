@@ -1,5 +1,6 @@
 package com.example.assistant;
 
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,6 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
+
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,8 +27,10 @@ public class AssistantGUI extends Application {
     private SpirareClient client;
     private final ProjectStructureAnalyzer analyzer = new ProjectStructureAnalyzer();
     private final JavaFileAnalyzer fileAnalyzer = new JavaFileAnalyzer();
+
     private final CodeSearcher codeSearcher = new CodeSearcher();
     private final CodeChunker chunker = new CodeChunker();
+
 
     public static void setEndpoint(String ep) {
         endpoint = ep;
@@ -42,16 +47,19 @@ public class AssistantGUI extends Application {
         Button showStructureButton = new Button("Show Structure");
         Button analyzeButton = new Button("Analyze File");
         Button testButton = new Button("Generate Tests");
+
         TextField searchField = new TextField();
         searchField.setPromptText("Search keyword");
         Button searchButton = new Button("Search");
         Button chunkButton = new Button("Chunk File");
 
         sendButton.setOnAction(e -> {
+
             try {
                 String result = client.sendPrompt(promptArea.getText());
                 responseArea.setText(result);
             } catch (IOException | InterruptedException ex) {
+
                 responseArea.setText("Error: " + ex.getMessage());
             }
         });
@@ -115,6 +123,7 @@ public class AssistantGUI extends Application {
             }
         });
 
+
         searchButton.setOnAction(e -> {
             DirectoryChooser chooser = new DirectoryChooser();
             var dir = chooser.showDialog(stage);
@@ -141,6 +150,7 @@ public class AssistantGUI extends Application {
         });
 
         HBox buttons = new HBox(10, sendButton, scanButton, showStructureButton, analyzeButton, testButton, searchField, searchButton, chunkButton);
+
         VBox center = new VBox(10, promptArea, buttons, responseArea);
         center.setPadding(new Insets(10));
 
@@ -148,5 +158,6 @@ public class AssistantGUI extends Application {
         stage.setTitle("Local Code Assistant");
         stage.setScene(scene);
         stage.show();
+
     }
 }
