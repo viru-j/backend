@@ -12,6 +12,8 @@ This project is a minimal example of a local code assistant written in Java. It 
 - Analyze a Java source file with Spoon to list method signatures.
 - Display the last scanned project structure in the UI.
 - Generate JUnit test skeletons for a selected class using Spoon.
+- Search Java files within a directory for a given keyword.
+- Split Java files into individual method chunks using Spoon.
 
 - Built with Java 21 and Maven.
 

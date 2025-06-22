@@ -7,13 +7,11 @@ import spoon.reflect.declaration.CtImport;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.visitor.filter.TypeFilter;
 
-
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
-
  * Analyzes a Java source file using the Spoon framework.
  */
 public class JavaFileAnalyzer {
@@ -29,7 +27,6 @@ public class JavaFileAnalyzer {
         launcher.addInputResource(file.toString());
         launcher.buildModel();
         model = launcher.getModel();
-
     }
 
     /**
@@ -48,7 +45,6 @@ public class JavaFileAnalyzer {
      * Returns a list of imports in the parsed file.
      */
     public List<String> listImports() {
-
         if (model == null) return List.of();
         return model.getElements(new TypeFilter<>(CtImport.class)).stream()
                 .map(Object::toString)
@@ -60,13 +56,11 @@ public class JavaFileAnalyzer {
      * Extracts the source text of a specific method by name.
      */
     public String extractMethod(String methodName) {
-
         if (model == null) return "";
         return model.getElements(new TypeFilter<>(CtMethod.class)).stream()
                 .filter(m -> m.getSimpleName().equals(methodName))
                 .findFirst()
                 .map(Object::toString)
-
                 .orElse("");
     }
 }

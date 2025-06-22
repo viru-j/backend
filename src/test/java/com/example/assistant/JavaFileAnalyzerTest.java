@@ -18,9 +18,7 @@ public class JavaFileAnalyzerTest {
         analyzer.parse(temp);
         List<String> methods = analyzer.listMethodSignatures();
         assertEquals(2, methods.size());
-
         assertTrue(methods.stream().anyMatch(m -> m.contains("void a()")));
         assertTrue(methods.stream().anyMatch(m -> m.contains("int b()")));
-
     }
 }

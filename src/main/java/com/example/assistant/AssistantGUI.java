@@ -13,10 +13,10 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 
 /**
  * JavaFX based UI for interacting with the assistant.
@@ -27,6 +27,10 @@ public class AssistantGUI extends Application {
     private SpirareClient client;
     private final ProjectStructureAnalyzer analyzer = new ProjectStructureAnalyzer();
     private final JavaFileAnalyzer fileAnalyzer = new JavaFileAnalyzer();
+
+    private final CodeSearcher codeSearcher = new CodeSearcher();
+    private final CodeChunker chunker = new CodeChunker();
+
 
     public static void setEndpoint(String ep) {
         endpoint = ep;
@@ -43,6 +47,11 @@ public class AssistantGUI extends Application {
         Button showStructureButton = new Button("Show Structure");
         Button analyzeButton = new Button("Analyze File");
         Button testButton = new Button("Generate Tests");
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search keyword");
+        Button searchButton = new Button("Search");
+        Button chunkButton = new Button("Chunk File");
 
         sendButton.setOnAction(e -> {
 
@@ -114,7 +123,34 @@ public class AssistantGUI extends Application {
             }
         });
 
-        HBox buttons = new HBox(10, sendButton, scanButton, showStructureButton, analyzeButton, testButton);
+
+        searchButton.setOnAction(e -> {
+            DirectoryChooser chooser = new DirectoryChooser();
+            var dir = chooser.showDialog(stage);
+            if (dir != null) {
+                try {
+                    var results = codeSearcher.search(dir.toPath(), searchField.getText());
+                    String text = results.isEmpty() ? "No matches" : String.join("\n", results.stream().map(Path::toString).toList());
+                    responseArea.setText(text);
+                } catch (IOException ex) {
+                    responseArea.setText("Search failed: " + ex.getMessage());
+                }
+            }
+        });
+
+        chunkButton.setOnAction(e -> {
+            FileChooser chooser = new FileChooser();
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java", "*.java"));
+            var file = chooser.showOpenDialog(stage);
+            if (file != null) {
+                var chunks = chunker.chunkMethods(file.toPath());
+                String text = String.join("\n\n", chunks.values());
+                responseArea.setText(text);
+            }
+        });
+
+        HBox buttons = new HBox(10, sendButton, scanButton, showStructureButton, analyzeButton, testButton, searchField, searchButton, chunkButton);
+
         VBox center = new VBox(10, promptArea, buttons, responseArea);
         center.setPadding(new Insets(10));
 
