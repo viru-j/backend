@@ -26,14 +26,12 @@
             <version>${neo4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>${lucene.version}</version>
+            <groupId>com.ub19</groupId>
+            <artifactId>shared-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analysis-common</artifactId>
-            <version>${lucene.version}</version>
+            <groupId>com.ub19</groupId>
+            <artifactId>adapters-lucene</artifactId>
         </dependency>
     </dependencies>
     <build>
