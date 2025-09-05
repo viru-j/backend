@@ -23,6 +23,7 @@
         <dependency>
             <groupId>com.ub19</groupId>
             <artifactId>shared-model</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.logstash.logback</groupId>
