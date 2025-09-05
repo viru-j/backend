@@ -7,3 +7,5 @@ neo4j:
   uri: bolt://localhost:7687
   user: neo4j
   password: password
+mcp:
+  base-url: http://localhost:8081
