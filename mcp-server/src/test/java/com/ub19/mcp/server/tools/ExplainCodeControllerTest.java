@@ -28,12 +28,12 @@ class ExplainCodeControllerTest {
 
     @Test
     void postReturnsExplanation() throws Exception {
-        when(service.explain(anyString(), anyInt())).thenReturn(new ExplainResponse("exp", List.of("F.java:1-2")));
+        when(service.explain(anyString(), anyInt())).thenReturn(new ExplainResponse("exp", List.of("F.java:L1-L2")));
         mvc.perform(post("/tools/explain_code")
                 .contentType("application/json")
                 .content("{\"question\":\"q\",\"topK\":1}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.explanationMd").value("exp"))
-                .andExpect(jsonPath("$.citations[0]").value("F.java:1-2"));
+                .andExpect(jsonPath("$.citations[0]").value("F.java:L1-L2"));
     }
 }

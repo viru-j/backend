@@ -14,6 +14,7 @@ import com.ub19.shared.model.dto.GraphQueryResponse;
 import com.ub19.shared.model.dto.ImpactAnalysisResponse;
 import com.ub19.shared.model.dto.OpenApiSkeletonResponse;
 import com.ub19.shared.model.dto.SearchResponse;
+import com.ub19.shared.model.util.Citations;
 
 /**
  * High level orchestration with a simple step budget and policy per use case.
@@ -54,7 +55,10 @@ public class OrchestratorService {
         ExplainResponse er = counter.call(() -> tools.explainCode(prompt, 5));
         audit.record("search_code", question, sr);
         audit.record("explain_code", question, er);
-        return new OrchestrateResponse(er.explanationMd(), er.citations());
+        List<String> canonical = er.citations().stream()
+                .map(Citations::canonicalize)
+                .toList();
+        return new OrchestrateResponse(er.explanationMd(), canonical);
     }
 
     private OrchestrateResponse handleUc2(String openapiYaml) {

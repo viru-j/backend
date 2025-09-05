@@ -33,7 +33,7 @@ class OrchestratorServiceTest {
                 .andRespond(withSuccess("{\"hits\":[]}", MediaType.APPLICATION_JSON));
         server.expect(requestTo("http://mcp/tools/explain_code"))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{\"explanationMd\":\"e\",\"citations\":[]}", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("{\"explanationMd\":\"e\",\"citations\":[\"src\\\\F.java:1-2\"]}", MediaType.APPLICATION_JSON));
 
         McpClientProperties props = new McpClientProperties();
         props.setBaseUrl("http://mcp");
@@ -44,6 +44,7 @@ class OrchestratorServiceTest {
         OrchestrateResponse resp = service.orchestrate("UC1", "q");
 
         assertEquals("e", resp.answerMd());
+        assertEquals("src/F.java:L1-L2", resp.citations().get(0));
         verify(audit, org.mockito.Mockito.times(2)).record(any(), any(), any());
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ub19.mcp.server.llm.LlmClient;
 import com.ub19.shared.model.dto.CodeHit;
 import com.ub19.shared.model.dto.ExplainResponse;
+import com.ub19.shared.model.util.Citations;
 
 /**
  * Orchestrates code search and summarization for explanations.
@@ -27,7 +28,7 @@ public class ExplainCodeService {
         List<CodeHit> hits = searchService.search(question, topK);
         String explanation = llmClient.summarize(question, hits);
         List<String> citations = hits.stream()
-                .map(hit -> hit.filePath() + ":" + hit.lineStart() + "-" + hit.lineEnd())
+                .map(hit -> Citations.canonicalize(hit.filePath(), hit.lineStart(), hit.lineEnd()))
                 .collect(Collectors.toList());
         return new ExplainResponse(explanation, citations);
     }

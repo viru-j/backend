@@ -27,6 +27,6 @@ class ExplainCodeServiceTest {
         ExplainResponse resp = service.explain("q", 2);
 
         assertEquals("exp", resp.explanationMd());
-        assertEquals(List.of("F.java:1-2"), resp.citations());
+        assertEquals(List.of("F.java:L1-L2"), resp.citations());
     }
 }
