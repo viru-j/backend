@@ -19,6 +19,7 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-mcp-server</artifactId>
+            <version>${spring-ai.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ub19</groupId>
@@ -40,6 +41,7 @@
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-invoker</artifactId>
+            <version>${maven-invoker.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
