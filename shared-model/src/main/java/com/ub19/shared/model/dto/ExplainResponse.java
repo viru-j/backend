@@ -9,8 +9,8 @@ import java.util.List;
  * DTO returned by explain code operations.
  */
 public record ExplainResponse(
-        @NotBlank String explanation,
-        @NotNull List<@Valid CodeHit> citations
+        @NotBlank String explanationMd,
+        @NotNull List<@NotBlank String> citations
 ) {
 }
 
