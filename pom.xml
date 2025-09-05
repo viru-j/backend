@@ -22,6 +22,9 @@
         <spring-boot.version>3.3.2</spring-boot.version>
         <lucene.version>9.10.0</lucene.version>
         <neo4j.version>5.19.0</neo4j.version>
+        <spring-ai.version>0.8.1</spring-ai.version>
+        <maven-invoker.version>3.3.0</maven-invoker.version>
+        <jqwik.version>1.8.2</jqwik.version>
     </properties>
 
     <dependencyManagement>
