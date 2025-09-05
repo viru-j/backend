@@ -8,9 +8,10 @@ import java.nio.file.Path;
 
 import net.jqwik.api.Assume;
 import net.jqwik.api.ForAll;
-import net.jqwik.api.IntRange;
+
 import net.jqwik.api.Property;
 
+import net.jqwik.api.constraints.IntRange;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TotalHits;

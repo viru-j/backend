@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import com.ub19.adapters.neo4j.Neo4jProperties;
 import com.ub19.mcp.server.lucene.LuceneProperties;
 
-@SpringBootTest(classes = ApplicationPropertiesTest.TestConfig.class)
+@SpringBootTest(classes = TestConfig.class)
 @TestPropertySource(properties = {
         "INDEX_PATH=/tmp/index",
         "NEO4J_URI=bolt://remote:7687",
