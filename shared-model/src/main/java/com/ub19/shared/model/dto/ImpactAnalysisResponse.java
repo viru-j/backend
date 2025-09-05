@@ -12,6 +12,7 @@ public record ImpactAnalysisResponse(
         @NotNull List<String> callees,
         @NotNull List<String> modules,
         @NotNull List<String> endpoints,
+        @NotNull List<DependencyRisk> dependencies,
         @NotBlank String riskMd
 ) {
 }

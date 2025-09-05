@@ -29,7 +29,7 @@ class ImpactAnalysisControllerTest {
 
     @Test
     void postReturnsAnalysis() throws Exception {
-        ImpactAnalysisResponse resp = new ImpactAnalysisResponse(List.of(), List.of(), List.of(), List.of(), "r");
+        ImpactAnalysisResponse resp = new ImpactAnalysisResponse(List.of(), List.of(), List.of(), List.of(), List.of(), "r");
         when(service.analyze(anyString(), anyInt(), anyBoolean())).thenReturn(resp);
         mvc.perform(post("/tools/impact_analysis")
                 .contentType("application/json")
