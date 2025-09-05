@@ -60,5 +60,15 @@ class SearchCodeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.hits[0].filePath").value("F.java"));
     }
+
+    @Test
+    void rejectsLargeQuery() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 1100; i++) sb.append('a');
+        mvc.perform(post("/tools/search_code")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"query\":\"" + sb + "\",\"topK\":1}"))
+                .andExpect(status().isBadRequest());
+    }
 }
 

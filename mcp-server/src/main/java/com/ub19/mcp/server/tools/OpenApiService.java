@@ -21,7 +21,12 @@ import com.ub19.shared.model.dto.OpenApiSkeletonResponse;
 @Service
 public class OpenApiService {
 
+    private static final int MAX_INPUT = 200_000;
+
     public OpenApiSkeletonResponse toSkeleton(String openapiYaml) {
+        if (openapiYaml.length() > MAX_INPUT) {
+            throw new IllegalArgumentException("openapiYaml too large");
+        }
         Yaml yaml = new Yaml();
         Map<String, Object> root = yaml.load(openapiYaml);
         Map<String, Object> info = (Map<String, Object>) root.getOrDefault("info", Map.of());
@@ -43,6 +48,12 @@ public class OpenApiService {
     }
 
     public GenerateApiResponse generate(String openapiYaml, String storyMd, String packageBase) {
+        if (openapiYaml != null && openapiYaml.length() > MAX_INPUT) {
+            throw new IllegalArgumentException("openapiYaml too large");
+        }
+        if (storyMd != null && storyMd.length() > MAX_INPUT) {
+            throw new IllegalArgumentException("storyMd too large");
+        }
         try {
             Path workspace = Files.createTempDirectory("api-gen-");
             if (openapiYaml != null && !openapiYaml.isBlank()) {

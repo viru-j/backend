@@ -1,36 +1,34 @@
 package com.ub19.orchestrator.audit;
 
-import java.util.Map;
+import static net.logstash.logback.argument.StructuredArguments.kv;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
- * Emits JSON audit logs for tool invocations.
+ * Emits structured JSON logs for tool invocations.
  */
 @Service
 public class AuditService {
 
     private static final Logger log = LoggerFactory.getLogger(AuditService.class);
-    private final ObjectMapper mapper;
 
-    public AuditService(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
-
-    public void record(String tool, Object request, Object response) {
-        Map<String, Object> entry = Map.of(
-                "tool", tool,
-                "request", request,
-                "response", response);
-        try {
-            log.info(mapper.writeValueAsString(entry));
-        } catch (JsonProcessingException e) {
-            log.warn("audit-log-failed", e);
-        }
+    /**
+     * Records a tool invocation with predefined fields.
+     *
+     * @param uc use case identifier
+     * @param tool tool name
+     * @param durationMs execution duration in milliseconds
+     * @param hits number of hits returned
+     */
+    public void record(String uc, String tool, long durationMs, int hits) {
+        log.info("tool-call",
+                kv("actor", "system"),
+                kv("uc", uc),
+                kv("tool", tool),
+                kv("duration_ms", durationMs),
+                kv("hits", hits));
     }
 }
+

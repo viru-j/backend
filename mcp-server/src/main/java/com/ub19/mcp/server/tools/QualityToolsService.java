@@ -50,8 +50,12 @@ public class QualityToolsService {
         ProcessBuilder pb = new ProcessBuilder("java", "-jar", jar.toString(), "--module=" + module);
         pb.redirectErrorStream(true);
         try {
-            Process proc = pb.start();
-            int code = proc.waitFor();
+            Process proc = start(pb);
+            if (!proc.waitFor(5, java.util.concurrent.TimeUnit.MINUTES)) {
+                proc.destroyForcibly();
+                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, new ApiError("RUNNER_TIMEOUT", "quality-runner timed out"));
+            }
+            int code = proc.exitValue();
             if (code != 0) {
                 throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, new ApiError("RUNNER_FAILED", "quality-runner exited with " + code));
             }
@@ -61,5 +65,9 @@ public class QualityToolsService {
             Thread.currentThread().interrupt();
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, new ApiError("RUNNER_ERROR", e.getMessage()));
         }
+    }
+
+    protected Process start(ProcessBuilder pb) throws IOException {
+        return pb.start();
     }
 }
