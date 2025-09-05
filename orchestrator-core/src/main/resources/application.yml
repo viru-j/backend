@@ -9,3 +9,11 @@ neo4j:
   password: ${NEO4J_PASSWORD:password}
 mcp:
   base-url: http://localhost:8081
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  info:
+    build:
+      enabled: true
