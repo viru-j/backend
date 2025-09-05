@@ -83,7 +83,7 @@ public class LuceneService implements Closeable {
         doc.add(new StringField(FIELD_REPO_PATH, repoPath, Field.Store.NO));
         doc.add(new StringField(FIELD_FILE_PATH, filePath, Field.Store.YES));
         doc.add(new StringField(FIELD_SYMBOL_FQN, nullSafe(symbolFqn), Field.Store.NO));
-        doc.add(new TextField(FIELD_CONTENTS, contents, Field.Store.NO));
+        doc.add(new TextField(FIELD_CONTENTS, contents, Field.Store.YES));
         doc.add(new StringField(FIELD_CHUNK_ID, chunkId, Field.Store.YES));
         doc.add(new IntPoint(FIELD_LINE_START, lineStart));
         doc.add(new StoredField(FIELD_LINE_START, lineStart));
