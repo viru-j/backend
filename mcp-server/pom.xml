@@ -21,17 +21,16 @@
             <artifactId>spring-ai-starter-mcp-server</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.neo4j.driver</groupId>
-            <artifactId>neo4j-java-driver</artifactId>
-            <version>${neo4j.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.ub19</groupId>
             <artifactId>shared-model</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ub19</groupId>
             <artifactId>adapters-lucene</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ub19</groupId>
+            <artifactId>adapters-neo4j</artifactId>
         </dependency>
     </dependencies>
     <build>

@@ -20,6 +20,10 @@
             <groupId>com.ub19</groupId>
             <artifactId>shared-model</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ub19</groupId>
+            <artifactId>adapters-neo4j</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
